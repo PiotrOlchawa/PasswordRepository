@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+
+    <script>
+        $(document).ready(function(){
+            //$('#btnDecryption').attr('disabled','disabled');
+
+            /* $('#btnEncryption').click(function(){
+              var encryptionText=$('#txtEncryption').val();
+              console.log('Text ' + encryptionText)
+              $('#txtEncryption').val(CryptoJS.AES.encrypt(encryptionText, "password"));
+              $('#btnDecryption').removeAttr('disabled');
+             });*/
+
+            /* $('#btnDecryption').click(function(){
+              var decryptionText=$('#txtEncryption').val();
+              console.log(' Text ' + decryptionText)
+              $('#txtDecryption').val((CryptoJS.AES.decrypt(decryptionText, "password")).toString(CryptoJS.enc.Utf8));
+             });*/
+
+
+            var root='http://127.0.0.1:8080/crypt';
+
+            /*Encrpt*/
+            $('body').on('click','input#btnEncryption',function(event){
+                console.log('encrypt clicked');
+
+                var encryptionText=$('#txtEncryption').val();
+                console.log('Text ' + encryptionText)
+                $('#txtDecryption').val(CryptoJS.AES.encrypt(encryptionText, "password"));
+
+                var text = {
+                    id : 1,
+                    fileText : $('#txtDecryption').val()
+                }
+                $.ajax({
+                    url: root,
+                    method: 'put',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    async: false, //wait for response
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    data: JSON.stringify(text)
+                });
+                //location.reload();
+            });
+
+            $.ajax({
+                url: root+'/1',
+                method: 'GET',
+                xhrFields: {
+                    withCredentials: true
+                },
+                contentType: 'application/json',
+                success: function(response) {
+                    console.log(response);
+                    $('#txtDecryption').val(response.fileText);
+                }});
+
+
+
+
+            /*Decrpt*/
+            $('body').on('click','input#btnDecryption',function(event){
+                console.log('decrypt clicked');
+
+                var decryptionText=$('#txtDecryption').val();
+                console.log('Text ' + decryptionText)
+                $('#txtEncryption').val((CryptoJS.AES.decrypt(decryptionText, "password")).toString(CryptoJS.enc.Utf8));
+            });
+
+        });
+
+
+
+    </script>
+
+</head>
+<body>
+
+<br /><br />
+<textarea rows="20" cols="100" id="txtEncryption"></textarea>
+<br />
+<input type="button" id="btnEncryption" value="Encrypt and send" />
+<br />
+<textarea rows="5" cols="100" id="txtDecryption"></textarea>
+<br />
+<input type="button" id="btnDecryption" value="Decrypt" />
+<br />
+<br>
+</body>
+</html>

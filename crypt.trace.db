@@ -1,0 +1,4 @@
+2019-03-11 00:06:02 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Wartość za długa dla kolumny "FILE_TEXT VARCHAR(255)": "'To jeTo jest1 testTo jest1 testTo jest1 testTo jest1 testTo jest1 testTo jest1 testTo jest1 testTo jest1 testTo jest1 testTo je... (2951)"
+Value too long for column "FILE_TEXT VARCHAR(255)": "'To jeTo jest1 testTo jest1 testTo jest1 testTo jest1 testTo jest1 testTo jest1 testTo jest1 testTo jest1 testTo jest1 testTo je... (2951)"; SQL statement:
+update stored_passwd_file set file_text=? where id=? [22001-197]
