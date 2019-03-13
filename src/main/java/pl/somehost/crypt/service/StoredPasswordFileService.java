@@ -2,6 +2,7 @@ package pl.somehost.crypt.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.somehost.crypt.domain.Crypt;
 import pl.somehost.crypt.domain.StoredPasswdFile;
 import pl.somehost.crypt.repository.StoredPasswdFileRepository;
 

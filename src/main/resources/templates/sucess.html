@@ -7,23 +7,9 @@
 
     <script>
         $(document).ready(function(){
-            //$('#btnDecryption').attr('disabled','disabled');
-
-            /* $('#btnEncryption').click(function(){
-              var encryptionText=$('#txtEncryption').val();
-              console.log('Text ' + encryptionText)
-              $('#txtEncryption').val(CryptoJS.AES.encrypt(encryptionText, "password"));
-              $('#btnDecryption').removeAttr('disabled');
-             });*/
-
-            /* $('#btnDecryption').click(function(){
-              var decryptionText=$('#txtEncryption').val();
-              console.log(' Text ' + decryptionText)
-              $('#txtDecryption').val((CryptoJS.AES.decrypt(decryptionText, "password")).toString(CryptoJS.enc.Utf8));
-             });*/
-
 
             var root='http://127.0.0.1:8080/crypt';
+            var psw;
 
             /*Encrpt*/
             $('body').on('click','input#btnEncryption',function(event){
@@ -31,7 +17,7 @@
 
                 var encryptionText=$('#txtEncryption').val();
                 console.log('Text ' + encryptionText)
-                $('#txtDecryption').val(CryptoJS.AES.encrypt(encryptionText, "password"));
+                $('#txtDecryption').val(CryptoJS.AES.encrypt(encryptionText, psw));
 
                 var text = {
                     id : 1,
@@ -63,36 +49,101 @@
                     $('#txtDecryption').val(response.fileText);
                 }});
 
-
-
-
             /*Decrpt*/
             $('body').on('click','input#btnDecryption',function(event){
                 console.log('decrypt clicked');
 
+                $('body').find('div#pswChangeComment').text('');
+
                 var decryptionText=$('#txtDecryption').val();
-                console.log('Text ' + decryptionText)
-                $('#txtEncryption').val((CryptoJS.AES.decrypt(decryptionText, "password")).toString(CryptoJS.enc.Utf8));
+                psw = $('input#psw').val();
+                console.log('Text ' + decryptionText +" psw " + psw);
+                var encryptedText=(CryptoJS.AES.decrypt(decryptionText, psw)).toString(CryptoJS.enc.Utf8);
+                console.log('encrypted text='+encryptedText+'=');
+                if (encryptedText === ''){
+                    psw=null;
+                    console.log('Invalid password');
+                    $('body').find('#pswComment').text('Invalid password !');
+                    $('body').find('div#pswComment').attr("class","rejected");
+                    $('body').find('div#changePasswd').hide();
+                } else {
+                    $('#txtEncryption').val(encryptedText);
+                    $('body').find('#pswComment').text('Password is correct !');
+                    $('body').find('div#pswComment').attr("class","accepted");
+                    $('body').find('div#changePasswd').fadeIn(1000);
+                }
             });
 
+            /*Change Password*/
+            $('body').on('click','input#btnChangePasswd',function(event){
+                console.log('changePassword clicked');
+
+                var password = $('body').find('#pswChange').val();
+                var passwordConfirmed = $('body').find('#pswChangeComp').val();
+
+                if(password === passwordConfirmed){
+                    console.log('passwords match');
+                    psw=passwordConfirmed;
+                    $('body').find('div#pswChangeComment').attr("class","accepted");
+                    $('body').find('div#pswChangeComment').attr("class","changePassword");
+                    $('body').find('div#pswChangeComment').text('Password was changed, please encrypt message with new password')
+                    $('body').find('div#changePasswd').fadeOut(4000);
+
+                }else{
+                    $('body').find('div#pswChangeComment').attr("class","rejected");
+                    $('body').find('div#pswChangeComment').text('Password does not match !')
+                }
+            });
+
+
         });
-
-
-
     </script>
+
+    <style>
+        .rejected {
+            color: red;
+        }
+        .accepted {
+            color: black;
+        }
+        .changePassword {
+            color: blue;
+        }
+    </style>
+
 
 </head>
 <body>
 
-<br /><br />
+<br/>
+Decrypted message:<br/>
 <textarea rows="20" cols="100" id="txtEncryption"></textarea>
 <br />
-<input type="button" id="btnEncryption" value="Encrypt and send" />
-<br />
+<input type="button" id="btnEncryption" value="Encrypt and Save" />
+<br/><br/>
+Encrypted message:<br>
 <textarea rows="5" cols="100" id="txtDecryption"></textarea>
-<br />
+<br/>
+Password:<br/>
+<input type="password" id="psw">&nbsp
 <input type="button" id="btnDecryption" value="Decrypt" />
-<br />
+<br/><br/>
+<div class="accepted" id="pswComment"></div>
+<br/>
 <br>
+<br/>
+
+<div hidden id="changePasswd">
+    Change password:<br/><br/>
+    New password:
+    <input type="password" id="pswChange">&nbsp
+    Confirm password:
+    <input type="password" id="pswChangeComp">&nbsp
+    <input type="button" id="btnChangePasswd" value="Change" />
+    <br/><br/>
+    <div class="accepted" id="pswChangeComment"></div>
+    <br/>
+</div>
+
 </body>
 </html>
